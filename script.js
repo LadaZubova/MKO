@@ -520,6 +520,18 @@ document.querySelectorAll('.section').forEach(section => {
     observer.observe(section);
 });
 
+// Делаем секции видимыми при клике на ссылки навигации
+document.querySelectorAll('.nav a[href^="#"]').forEach(link => {
+    link.addEventListener('click', function() {
+        const targetId = this.getAttribute('href').substring(1);
+        const target = document.getElementById(targetId);
+        if (target) {
+            target.style.opacity = '1';
+            target.style.transform = 'translateY(0)';
+        }
+    });
+});
+
 // ==================== ПОДСВЕТКА НАВИГАЦИИ ====================
 
 const sections = document.querySelectorAll('section[id]');
