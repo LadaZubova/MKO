@@ -533,3 +533,67 @@ window.addEventListener('scroll', () => {
             : '#a8b4c8';
     });
 });
+// ==================== СКАЧИВАНИЕ PDF ====================
+
+document.querySelectorAll('.btn-download').forEach(link => {
+    link.addEventListener('click', async function(e) {
+        e.preventDefault();
+
+        const url = this.getAttribute('href');
+        const filename = this.getAttribute('download') || 'document.pdf';
+
+        console.log('Пробую скачать:', url);
+
+        try {
+            // Проверяем, существует ли файл
+            const response = await fetch(url, { method: 'HEAD' });
+
+            console.log('Ответ сервера:', response.status, response.headers.get('content-type'));
+
+            // Если файл не найден — показываем ошибку
+            if (!response.ok) {
+                alert(
+                    'ОШИБКА: файл не найден на сервере.\n\n' +
+                    'Путь: ' + url + '\n' +
+                    'Статус: ' + response.status + '\n\n' +
+                    'Проверь, что файл загружен на GitHub по этому пути.'
+                );
+                return;
+            }
+
+            // Проверяем, что это PDF, а не HTML
+            const contentType = response.headers.get('content-type') || '';
+            if (contentType.includes('text/html')) {
+                alert(
+                    'ОШИБКА: сервер вернул HTML вместо PDF.\n\n' +
+                    'Это значит, что файл не найден, и GitHub отдаёт страницу 404.\n\n' +
+                    'Путь: ' + url
+                );
+                return;
+            }
+
+            // Скачиваем файл
+            const blob = await response.blob();
+            const blobUrl = window.URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = blobUrl;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+
+            window.URL.revokeObjectURL(blobUrl);
+
+            console.log('✅ Файл скачан:', filename);
+
+        } catch (error) {
+            console.error('Ошибка:', error);
+            alert(
+                'ОШИБКА при скачивании:\n\n' +
+                error.message + '\n\n' +
+                'Путь: ' + url
+            );
+        }
+    });
+});
