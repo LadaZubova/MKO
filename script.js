@@ -535,65 +535,85 @@ window.addEventListener('scroll', () => {
 });
 // ==================== СКАЧИВАНИЕ PDF ====================
 
-document.querySelectorAll('.btn-download').forEach(link => {
-    link.addEventListener('click', async function(e) {
-        e.preventDefault();
+(function() {
+    'use strict';
 
-        const url = this.getAttribute('href');
-        const filename = this.getAttribute('download') || 'document.pdf';
+    // Находим все кнопки скачивания
+    const downloadButtons = document.querySelectorAll('.btn-download');
 
-        console.log('Пробую скачать:', url);
+    downloadButtons.forEach(function(button) {
+        button.addEventListener('click', async function(event) {
+            event.preventDefault();
 
-        try {
-            // Проверяем, существует ли файл
-            const response = await fetch(url, { method: 'HEAD' });
+            const url = this.getAttribute('href');
+            const fileName = this.getAttribute('download') || 'document.pdf';
 
-            console.log('Ответ сервера:', response.status, response.headers.get('content-type'));
+            // Меняем текст кнопки на время загрузки
+            const originalText = this.textContent;
+            this.textContent = 'Загрузка...';
+            this.style.pointerEvents = 'none';
 
-            // Если файл не найден — показываем ошибку
-            if (!response.ok) {
+            try {
+                // Загружаем файл
+                const response = await fetch(url);
+
+                if (!response.ok) {
+                    throw new Error('Файл не найден (статус ' + response.status + ')');
+                }
+
+                // Проверяем Content-Type
+                const contentType = response.headers.get('content-type') || '';
+
+                if (contentType.includes('text/html')) {
+                    throw new Error('Сервер вернул HTML вместо PDF. Проверь, что файл загружен на GitHub.');
+                }
+
+                // Получаем данные как Blob
+                const blob = await response.blob();
+
+                // Проверяем размер
+                if (blob.size < 1000) {
+                    throw new Error('Файл слишком маленький — возможно, это ошибка 404.');
+                }
+
+                // Создаём ссылку и скачиваем
+                const blobUrl = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = blobUrl;
+                link.download = fileName;
+                link.style.display = 'none';
+
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                // Очищаем память
+                setTimeout(function() {
+                    window.URL.revokeObjectURL(blobUrl);
+                }, 1000);
+
+                // Возвращаем текст кнопки
+                this.textContent = 'Скачано!';
+                const self = this;
+                setTimeout(function() {
+                    self.textContent = originalText;
+                    self.style.pointerEvents = 'auto';
+                }, 2000);
+
+            } catch (error) {
+                console.error('Ошибка скачивания:', error);
+
+                // Показываем ошибку
                 alert(
-                    'ОШИБКА: файл не найден на сервере.\n\n' +
-                    'Путь: ' + url + '\n' +
-                    'Статус: ' + response.status + '\n\n' +
-                    'Проверь, что файл загружен на GitHub по этому пути.'
+                    'Не удалось скачать файл.\n\n' +
+                    'Причина: ' + error.message + '\n\n' +
+                    'Проверь, что файл ' + url + ' действительно существует на GitHub.'
                 );
-                return;
+
+                // Возвращаем кнопку в исходное состояние
+                this.textContent = originalText;
+                this.style.pointerEvents = 'auto';
             }
-
-            // Проверяем, что это PDF, а не HTML
-            const contentType = response.headers.get('content-type') || '';
-            if (contentType.includes('text/html')) {
-                alert(
-                    'ОШИБКА: сервер вернул HTML вместо PDF.\n\n' +
-                    'Это значит, что файл не найден, и GitHub отдаёт страницу 404.\n\n' +
-                    'Путь: ' + url
-                );
-                return;
-            }
-
-            // Скачиваем файл
-            const blob = await response.blob();
-            const blobUrl = window.URL.createObjectURL(blob);
-
-            const a = document.createElement('a');
-            a.href = blobUrl;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-
-            window.URL.revokeObjectURL(blobUrl);
-
-            console.log('✅ Файл скачан:', filename);
-
-        } catch (error) {
-            console.error('Ошибка:', error);
-            alert(
-                'ОШИБКА при скачивании:\n\n' +
-                error.message + '\n\n' +
-                'Путь: ' + url
-            );
-        }
+        });
     });
-});
+})();
