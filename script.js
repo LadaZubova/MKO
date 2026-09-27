@@ -11,6 +11,8 @@ const translations = {
         'nav.planets': 'Планеты',
         'nav.conclusions': 'Выводы',
         'nav.document': 'Работа',
+        'nav.perspectives': 'Перспективы',
+        'nav.refs': 'Литература',
 
         'hero.label': 'Исследовательский проект',
         'hero.title': 'Сравнительный анализ абляционной и фазопереходной термозащиты для многоразовых спускаемых аппаратов',
@@ -167,6 +169,8 @@ const translations = {
         'nav.planets': 'Planets',
         'nav.conclusions': 'Conclusions',
         'nav.document': 'Paper',
+        'nav.perspectives': 'Outlook',
+        'nav.refs': 'References',
 
         'hero.label': 'Research project',
         'hero.title': 'Comparative analysis of ablative and phase-change thermal protection for reusable re-entry vehicles',
@@ -323,6 +327,8 @@ const translations = {
         'nav.planets': 'Planeten',
         'nav.conclusions': 'Schlussfolgerungen',
         'nav.document': 'Arbeit',
+        'nav.perspectives': 'Perspektiven',
+        'nav.refs': 'Literatur',
 
         'hero.label': 'Forschungsprojekt',
         'hero.title': 'Vergleichende Analyse des ablativen und Phasenwechsel-Wärmeschutzes für wiederverwendbare Landekapseln',
