@@ -284,7 +284,25 @@
         </ul>
     </div>
 </section>
+<!-- ТЕКСТОВАЯ РАБОТА -->
+<section id="document" class="section">
+    <div class="container">
+        <h2 data-i18n="doc.title">Текстовая работа</h2>
+        <p class="text-muted" data-i18n="doc.description">Выберите язык для просмотра полного текста проекта.</p>
 
+        <!-- Кнопки языков -->
+        <div class="doc-tabs">
+            <button class="doc-tab active" data-lang="ru">Русский</button>
+            <button class="doc-tab" data-lang="en">English</button>
+            <button class="doc-tab" data-lang="de">Deutsch</button>
+        </div>
+
+        <!-- Окно с PDF -->
+        <div class="doc-viewer">
+            <iframe id="pdf-frame" src="project-ru.pdf" frameborder="0"></iframe>
+        </div>
+    </div>
+</section>
 <!-- ЛИТЕРАТУРА -->
 <section class="section section-dark">
     <div class="container">
