@@ -533,3 +533,28 @@ window.addEventListener('scroll', () => {
             : '#a8b4c8';
     });
 });
+// ==================== ПРОСМОТР ДОКУМЕНТОВ ====================
+
+const documents = {
+    ru: 'project-ru.pdf',
+    en: 'project-en.pdf',
+    de: 'project-de.pdf'
+};
+
+function switchDocument(lang) {
+    const url = documents[lang];
+    if (!url) return;
+
+    const frame = document.getElementById('pdf-frame');
+    if (frame) frame.src = url;
+
+    document.querySelectorAll('.doc-tab').forEach(tab => {
+        tab.classList.toggle('active', tab.getAttribute('data-lang') === lang);
+    });
+}
+
+document.querySelectorAll('.doc-tab').forEach(tab => {
+    tab.addEventListener('click', function() {
+        switchDocument(this.getAttribute('data-lang'));
+    });
+});
